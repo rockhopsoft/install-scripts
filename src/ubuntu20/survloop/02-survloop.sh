@@ -4,16 +4,15 @@ echo '====================='
 echo 'Survloop Installation'
 echo '---------------------'
 echo 'To be run under "sudo su"'
-if [ $# -eq 0 ]
-then
+if [ $# -eq 0 ]; then
     echo '---------------------'
     echo 'To run this with all commands printing to the screen,'
     echo 'cancel this (Ctrl+C), and re-run this script with any parameter:'
-    echo '# bash /root/ubuntu20/survloop/02-survloop.sh debug'
+    echo '# bash /root/install-scripts/ubuntu20/survloop/02-survloop.sh debug'
 fi
 echo '====================='
 echo ''
-read -p $'Which super username will deploy updates on this server?\n(e.g. survuser) \n' USR
+read -p $'Which super username will deploy updates on this server?\n(e.g. survuser) \n' SUPUSER
 echo ''
 read -p $'What is the domain name for this Survloop installation?\n(e.g. example.com) \n' DIR
 echo ''
@@ -21,14 +20,13 @@ read -p $'What is the IP address for this server?\n(e.g. 123.456.789.012) \n' IP
 echo ''
 read -p $'Would you like to install an SSL certificate using EFF\'s Certbot?\n("y" or "n") \n' SSLCERT
 echo ''
-read -p $'Do you want a standalone Survloop installation? If not, you must have a package which extends the Survloop engine.\n("y" or "n") \n' NOPCKG
+read -p $'Do you want a standalone Survloop installation? If not, you need a package which extends the Survloop engine.\n("y" or "n") \n' NOPCKG
 echo ''
-PCKGUSER=""
+PCKGVEND=""
 PCKGNAME=""
 PCKGCLASS=""
-if [ "$NOPCKG" == "n" ]
-then
-    read -p $'What is the username/owner of your package?\n(e.g. rockhopsoft) \n' PCKGUSER
+if [ "$NOPCKG" == "n" ]; then
+    read -p $'What is the your package vendor name?\n(e.g. rockhopsoft) \n' PCKGVEND
     echo ''
     read -p $'What is the name of your package?\n(e.g. survlooporg) \n' PCKGNAME
     echo ''
@@ -42,16 +40,14 @@ echo 'Survloop Installation Settings'
 echo '------------------------------'
 echo "Domain:        $DIR"
 echo "IP Address:    $IP"
-echo "Username:      $USR"
-if [ "$NOPCKG" == "n" ]
-then
-    echo "Package:       $PCKGUSER/$PCKGNAME"
+echo "Username:      $SUPUSER"
+if [ "$NOPCKG" == "n" ]; then
+    echo "Package:       $PCKGVEND/$PCKGNAME"
     echo "Package Class: $PCKGCLASS"
 fi
 echo "Install SSL?   $SSLCERT"
 echo '=============================='
-if [ $# -eq 1 ]
-then
+if [ $# -eq 1 ]; then
     set -x
 fi
 echo ''
@@ -67,7 +63,7 @@ ufw allow 'Nginx HTTPS'
 echo "y" | ufw enable
 echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php7.4-zip php7.4-gd ghostscript
 systemctl reload nginx
-cp /root/ubuntu20/survloop/samples/nginx-example.com /etc/nginx/sites-available/$DIR
+cp /root/install-scripts/ubuntu20/survloop/samples/nginx-example.com /etc/nginx/sites-available/$DIR
 sed -i "s/example.com/$DIR/g" /etc/nginx/sites-available/$DIR
 sed -i "s/server.ip.address/$IP/g" /etc/nginx/sites-available/$DIR
 #nano /etc/nginx/sites-available/$DIR
@@ -75,8 +71,7 @@ ln -s /etc/nginx/sites-available/$DIR /etc/nginx/sites-enabled/
 unlink /etc/nginx/sites-enabled/default
 nginx -t
 systemctl reload nginx
-if [ "$SSLCERT" == "y" ]
-then
+if [ "$SSLCERT" == "y" ]; then
     echo ''
     echo '--'
     echo '----'
@@ -117,12 +112,11 @@ echo '----'
 echo '--------'
 echo 'Install Laravel Framework'
 echo '========================='
-if [ -d "/var/www/$DIR" ]
-then
+if [ -d "/var/www/$DIR" ]; then
     rm -R /var/www/$DIR
 fi
-composer create-project laravel/laravel /var/www/$DIR 8.0.*
-chown -R $USR:$USR /var/www/$DIR
+composer create-project laravel/laravel /var/www/$DIR 8.0.* --no-dev
+chown -R $SUPUSER:$SUPUSER /var/www/$DIR
 cd /var/www/$DIR
 php artisan key:generate
 chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
@@ -137,8 +131,7 @@ echo '----'
 echo '--------'
 echo 'Enter Laravel Database Login Info'
 echo '================================='
-if [ "$NOPCKG" == "n" ]
-then
+if [ "$NOPCKG" == "n" ]; then
     sed -i "s/APP_NAME=Laravel/APP_NAME=$PCKGCLASS/g" /var/www/$DIR/.env
 else
     sed -i "s/APP_NAME=Laravel/APP_NAME=Survloop/g" /var/www/$DIR/.env
@@ -150,80 +143,90 @@ URLSERVR="https:\/\/$DIR"
 sed -i "s/APP_URL=$URLLOCAL/APP_URL=$URLSERVR/g" /var/www/$DIR/.env
 nano /var/www/$DIR/.env
 echo 'Laravel environment file updated.'
+php artisan config:cache
 echo ''
 echo '--'
 echo '----'
 echo '--------'
-if [ "$NOPCKG" == "n" ]
-then
+if [ "$NOPCKG" == "n" ]; then
     echo 'Install Survloop & Extension Package'
     echo '===================================='
+    composer require $PCKGVEND/$PCKGNAME
+    cp -f /root/samples/laravel-composer-package.json /var/www/$DIR/composer.json
+    SLPKG='rockhopsoft\/survlooporg'
+    PCKGFULL="$PCKGVEND\/$PCKGNAME"
+    sed -i "s/$SLPKG/$PCKGFULL/g" /var/www/$DIR/composer.json
+    sed -i "s/SurvloopOrg/$PCKGCLASS/g" /var/www/$DIR/composer.json
+    composer clear-cache
+    composer install --optimize-autoloader --no-dev
+    php artisan optimize:clear
+    cp -f /root/samples/laravel-config-app-package.php /var/www/$DIR/config/app.php
+    sed -i "s/SurvloopOrg/$PCKGCLASS/g" /var/www/$DIR/config/app.php
 else
     echo 'Install Survloop'
     echo '================'
-fi    
-php artisan config:cache
-if [ "$NOPCKG" == "n" ]
-then
-    cp -f /root/ubuntu20/survloop/samples/laravel-composer-package.json /var/www/$DIR/composer.json
-    SLPKG='rockhopsoft\/survlooporg'
-    PCKGFULL="$PCKGUSER\/$PCKGNAME"
-    sed -i "s/$SLPKG/$PCKGFULL/g" /var/www/$DIR/composer.json
-    sed -i "s/SurvloopOrg/$PCKGCLASS/g" /var/www/$DIR/composer.json
-    cp -f /root/ubuntu20/survloop/samples/laravel-config-app-package.php /var/www/$DIR/config/app.php
-    sed -i "s/SurvloopOrg/$PCKGCLASS/g" /var/www/$DIR/config/app.php
-else
-    cp -f /root/ubuntu20/survloop/samples/laravel-composer.json /var/www/$DIR/composer.json
-    cp -f /root/ubuntu20/survloop/samples/laravel-config-app.php /var/www/$DIR/config/app.php
+    composer require rockhopsoft/survloop
+    cp -f /root/samples/laravel-composer.json /var/www/$DIR/composer.json
+    composer clear-cache
+    composer install --optimize-autoloader --no-dev
+    php artisan optimize:clear
+    cp -f /root/samples/laravel-config-app.php /var/www/$DIR/config/app.php
 fi
-composer install --optimize-autoloader --no-dev
-php artisan optimize:clear
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
+php artisan optimize:clear
+composer dump-autoload
 echo ''
 echo '--'
 echo '----'
 echo '--------'
 echo 'Create Super User Deployment Tools'
 echo '=================================='
-mkdir /home/$USR/survloop/
-cp /root/ubuntu20/survloop/samples/deploy-update-from-staging.sh /home/$USR/survloop/deploy-update-from-staging.sh
-cp /root/ubuntu20/survloop/samples/maintenance-mode.sh /home/$USR/survloop/maintenance-mode.sh
-cp /root/ubuntu20/survloop/samples/maintenance-index.php /home/$USR/survloop/maintenance-index.php
-mkdir /home/$USR/staging/
-mkdir /home/$USR/staging/rockhopsoft
-mkdir /home/$USR/staging/rockhopsoft/survloop
-mkdir /home/$USR/staging/rockhopsoft/survloop-libraries
-cp -R /var/www/$DIR/vendor/rockhopsoft/survloop/src /home/$USR/staging/rockhopsoft/survloop/src
-cp -R /var/www/$DIR/vendor/rockhopsoft/survloop-libraries/src /home/$USR/staging/rockhopsoft/survloop-libraries/src
-if [ "$NOPCKG" == "n" ]
-then
-    mkdir /home/$USR/staging/$PCKGUSER
-    mkdir /home/$USR/staging/$PCKGUSER/$PCKGNAME
-    cp -R /var/www/$DIR/vendor/$PCKGUSER/$PCKGNAME/src /home/$USR/staging/$PCKGUSER/$PCKGNAME/src
+mkdir /home/$SUPUSER/survloop/
+cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-from-staging.sh /home/$SUPUSER/survloop/deploy-update-from-staging.sh
+cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-from-space.sh /home/$SUPUSER/survloop/deploy-update-from-space.sh
+cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-core.sh /home/$SUPUSER/survloop/deploy-update-core.sh
+cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-dirs.sh /home/$SUPUSER/survloop/deploy-update-dirs.sh
+
+#sed -i "s/SurvloopOrg/$PCKGCLASS/g" /home/$SUPUSER/survloop/deploy-update-from-space.sh
+sed -i "s/SurvloopOrg/$PCKGCLASS/g" /home/$SUPUSER/survloop/deploy-update-from-space.sh
+
+cp /root/install-scripts/ubuntu20/survloop/samples/maintenance-mode.sh /home/$SUPUSER/survloop/maintenance-mode.sh
+cp /root/install-scripts/ubuntu20/survloop/samples/maintenance-index.php /home/$SUPUSER/survloop/maintenance-index.php
+mkdir /home/$SUPUSER/staging/
+mkdir /home/$SUPUSER/staging/rockhopsoft
+mkdir /home/$SUPUSER/staging/rockhopsoft/survloop
+mkdir /home/$SUPUSER/staging/rockhopsoft/survloop-libraries
+cp -R /var/www/$DIR/vendor/rockhopsoft/survloop/src /home/$SUPUSER/staging/rockhopsoft/survloop/src
+cp -R /var/www/$DIR/vendor/rockhopsoft/survloop-libraries/src /home/$SUPUSER/staging/rockhopsoft/survloop-libraries/src
+if [ "$NOPCKG" == "n" ]; then
+    mkdir /home/$SUPUSER/staging/$PCKGVEND
+    mkdir /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME
+    cp -R /var/www/$DIR/vendor/$PCKGVEND/$PCKGNAME/src /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME/src
 fi
-chown -R $USR:$USR /home/$USR/survloop
-chown -R $USR:$USR /home/$USR/staging
+chown -R $SUPUSER:$SUPUSER /home/$SUPUSER/survloop
+chown -R $SUPUSER:$SUPUSER /home/$SUPUSER/staging
 echo ''
 echo '--'
 echo '----'
 echo '--------'
-echo "Build Database with Laravel Migrations"
-echo "======================================"
-FACADE='\\Illuminate\\Support\\Facades\\DB'
-sed -i "s/Schema::create/$FACADE::statement('SET SESSION sql_require_primary_key=0'); Schema::create/g" /var/www/$DIR/database/migrations/2014_10_12_100000_create_password_resets_table.php
-sed -i "s/Schema::create/$FACADE::statement('SET SESSION sql_require_primary_key=0'); Schema::create/g" /var/www/$DIR/database/migrations/2019_08_19_000000_create_failed_jobs_table.php
+echo 'Build Database with Laravel Migrations'
+echo '======================================'
+DBKEY='\\Illuminate\\Support\\Facades\\DB'
+sed -i "s/Schema::create/$DBKEY::statement('SET SESSION sql_require_primary_key=0'); Schema::create/g" /var/www/$DIR/database/migrations/*.php
 echo "yes" | php artisan migrate --force
 echo ''
 echo '--'
 echo '----'
 echo '--------'
-echo "Fill Database with Laravel Seeders"
-echo "=================================="
+echo 'Fill Database with Laravel Seeders'
+echo '=================================='
 echo "yes" | php artisan db:seed --force --class=SurvloopSeeder
 echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder
-if [ "$NOPCKG" == "n" ]
-then
+echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder2
+echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder3
+echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder4
+if [ "$NOPCKG" == "n" ]; then
     echo "yes" | php artisan db:seed --force --class=$PCKGCLASS
 fi
 chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models

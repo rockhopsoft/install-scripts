@@ -15,7 +15,7 @@
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
-        "rockhopsoft/survlooporg": "v0.2.*"
+        "rockhopsoft/survloop": "v0.2.*"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",
@@ -39,8 +39,7 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "Survloop\\": "vendor/rockhopsoft/survloop/src/",
-            "SurvloopOrg\\": "vendor/rockhopsoft/survlooporg/src/"
+            "RockHopSoft\\Survloop\\": "vendor/rockhopsoft/survloop/src/"
         }
     },
     "autoload-dev": {

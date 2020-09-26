@@ -175,8 +175,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        Survloop\SurvloopServiceProvider::class,
-        SurvloopOrg\SurvloopOrgServiceProvider::class,
+        RockHopSoft\Survloop\SurvloopServiceProvider::class,
+        RockHopSoft\SurvloopOrg\SurvloopOrgServiceProvider::class,
 
     ],
 

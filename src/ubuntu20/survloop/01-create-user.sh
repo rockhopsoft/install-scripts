@@ -29,7 +29,8 @@ echo ''
 YUBI=""
 if [ "$WANTYUBI" = "y" ]
 then
-    read -p $'What are the first 12 characters of the YubiKey token?\n(e.g. ccccccjdjfge)\n' YUBI
+    read -p $'Please press the button on your YubiKey device:\n' YUBI
+    YUBI=${YUBI:0:12} 
 fi
 echo ''
 echo 'Ubuntu 20.04 Super User Initiation Settings'
