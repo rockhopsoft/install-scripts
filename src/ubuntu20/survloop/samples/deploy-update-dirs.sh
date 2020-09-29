@@ -21,6 +21,7 @@ fi
 if [ ! -d /home/$SUPUSER/staging/$PCKGA/$PCKGB ]; then
     mkdir /home/$SUPUSER/staging/$PCKGA/$PCKGB
 fi
+chown -R $SUPUSER:$SUPUSER /home/$SUPUSER/staging
 
 if [ ! -d /tmp/backup ]; then
     mkdir /tmp/backup
