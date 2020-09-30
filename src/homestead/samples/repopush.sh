@@ -1,15 +1,26 @@
 #!/bin/bash
 set -x
 
-DIR="survloop"
+# Directory where all your repositories are located:
+REPODIR="~/repos"
 
-rm -r ./homestead/code/$DIR/vendor/rockhopsoft/survloop/src
-cp -r ./repos/survloop/src ./homestead/code/survloop/vendor/rockhopsoft/survloop/
+# Directory which syncs with the virtual server
+HOMEDIR="~/homestead/code"
 
-rm -r ./homestead/code/$DIR/vendor/rockhopsoft/survloop-libraries/src
-cp -r ./repos/survloop-libraries/src ./homestead/code/survloop/vendor/rockhopsoft/survloop-libraries/
+# Installation sub-directory within synched virtual server
+INSTDIR="survloop"
 
-rm -r ./homestead/code/$DIR/app/Models/*
 
-cd ./homestead/code/survloop/
+rm -r $HOMEDIR/$INSTDIR/vendor/rockhopsoft/survloop/src
+cp -r $REPODIR/survloop/src $HOMEDIR/$INSTDIR/vendor/rockhopsoft/survloop/
+
+rm -r $HOMEDIR/$INSTDIR/vendor/rockhopsoft/survloop-libraries/src
+cp -r $REPODIR/survloop-libraries/src $HOMEDIR/$INSTDIR/vendor/rockhopsoft/survloop-libraries/
+
+rm -r $HOMEDIR/$INSTDIR/app/Models/*
+
+cd $HOMEDIR/$INSTDIR/
+composer dump-autoload
+php artisan optimize:clear
 echo "0" | php artisan vendor:publish --force
+curl http://$DIR/css-reload

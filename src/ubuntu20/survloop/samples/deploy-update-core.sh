@@ -46,6 +46,7 @@ cd /var/www/$DIR
 php artisan optimize:clear
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
+curl http://$DIR/css-reload
 
 set +x
 

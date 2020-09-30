@@ -129,3 +129,4 @@ fi
 #chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
 php artisan optimize:clear
 composer dump-autoload
+curl http://$DIR.local/css-reload
