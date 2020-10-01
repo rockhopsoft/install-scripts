@@ -38,6 +38,13 @@ if [ "$NOPCKG" == "n" ]; then
     echo "Package Class: $PCKGCLASS"
 fi
 echo '=============================='
+
+sed -i "s/INSTDIR='survloop'/INSTDIR='$DIR'/g" install-scripts/src/homestead/samples/*.sh
+sed -i "s/SUPUSER='survuser'/SUPUSER='$SUPUSER'/g" install-scripts/src/homestead/samples/*.sh
+sed -i "s/PCKGVEND='rockhopsoft'/PCKGVEND='$PCKGVEND'/g" install-scripts/src/homestead/samples/*.sh
+sed -i "s/PCKGNAME='survlooporg'/PCKGNAME='$PCKGNAME'/g" install-scripts/src/homestead/samples/*.sh
+sed -i "s/PCKGCLASS='SurvloopOrg'/PCKGCLASS='$PCKGCLASS'/g" install-scripts/src/homestead/samples/*.sh
+
 if [ $# -eq 1 ]; then
     set -x
 fi
@@ -67,7 +74,7 @@ if [ -d "./$DIR/orig.env" ]; then
     rm -f ./$DIR/orig.env
 fi
 mv ./$DIR/.env ./$DIR/orig.env
-cp ./install-scripts/homestead/samples/survloop.env $DIR/env.txt
+cp ./install-scripts/src/homestead/samples/survloop.env $DIR/env.txt
 if [ "$NOPCKG" == "n" ]; then
     perl -pi -w -e "s/APP_NAME=Survloop/APP_NAME=$PCKGCLASS/g" $DIR/env.txt
     perl -pi -w -e "s/survloop.local/$DIR.local/g" $DIR/env.txt

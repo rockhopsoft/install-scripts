@@ -1,10 +1,10 @@
 #!/bin/bash
 set -x
 
-DIR="rockhopsoft.com"
-SUPUSER="rocky"
-PCKGA="rockhopsoft"
-PCKGB="rockhopsoftcom"
+DIR='survloop.org'
+SUPUSER='survuser'
+PCKGVEND='rockhopsoft'
+PCKGNAME='survlooporg'
 
 if [ $# -eq 1 ]; then
     DIR="$DIR-production"
@@ -20,8 +20,8 @@ fi
 if [ -d /home/$SUPUSER/staging/rockhopsoft/survloop-libraries/src ]; then
     rm -R /home/$SUPUSER/staging/rockhopsoft/survloop-libraries/src
 fi
-if [ -d /home/$SUPUSER/staging/$PCKGA/$PCKGB/src ]; then
-    rm -R /home/$SUPUSER/staging/$PCKGA/$PCKGB/src
+if [ -d /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME/src ]; then
+    rm -R /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME/src
 fi
 
 echo ''
@@ -36,8 +36,8 @@ wget -c https://space.survloop.org/repos/survloop.tar.gz -O - | tar -xz --warnin
 cd /home/$SUPUSER/staging/rockhopsoft/survloop-libraries
 wget -c https://space.survloop.org/repos/survloop-libraries.tar.gz -O - | tar -xz --warning=none
 
-cd /home/$SUPUSER/staging/$PCKGA/$PCKGB
-wget -c https://space.survloop.org/repos/$PCKGB.tar.gz -O - | tar -xz --warning=none
+cd /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME
+wget -c https://space.survloop.org/repos/$PCKGNAME.tar.gz -O - | tar -xz --warning=none
 
 set +x 
 

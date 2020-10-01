@@ -2,9 +2,9 @@
 # Check deployment directories...
 set +x
 
-SUPUSER="rocky"
-PCKGA="rockhopsoft"
-PCKGB="rockhopsoftcom"
+SUPUSER='survuser'
+PCKGVEND='rockhopsoft'
+PCKGNAME='survlooporg'
 
 if [ ! -d /home/$SUPUSER/staging ]; then
     mkdir /home/$SUPUSER/staging
@@ -18,8 +18,8 @@ fi
 if [ ! -d /home/$SUPUSER/staging/rockhopsoft/survloop-libraries ]; then
     mkdir /home/$SUPUSER/staging/rockhopsoft/survloop-libraries
 fi
-if [ ! -d /home/$SUPUSER/staging/$PCKGA/$PCKGB ]; then
-    mkdir /home/$SUPUSER/staging/$PCKGA/$PCKGB
+if [ ! -d /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME ]; then
+    mkdir /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME
 fi
 chown -R $SUPUSER:$SUPUSER /home/$SUPUSER/staging
 
@@ -35,8 +35,8 @@ fi
 if [ ! -d /tmp/backup/rockhopsoft/survloop-libraries ]; then
     mkdir /tmp/backup/rockhopsoft/survloop-libraries
 fi
-if [ ! -d /tmp/backup/$PCKGA/$PCKGB ]; then
-    mkdir /tmp/backup/$PCKGA/$PCKGB
+if [ ! -d /tmp/backup/$PCKGVEND/$PCKGNAME ]; then
+    mkdir /tmp/backup/$PCKGVEND/$PCKGNAME
 fi
 
 if [ ! -d /tmp/staging ]; then
@@ -51,6 +51,6 @@ fi
 if [ ! -d /tmp/staging/rockhopsoft/survloop-libraries ]; then
     mkdir /tmp/staging/rockhopsoft/survloop-libraries
 fi
-if [ ! -d /tmp/staging/$PCKGA/$PCKGB ]; then
-    mkdir /tmp/staging/$PCKGA/$PCKGB
+if [ ! -d /tmp/staging/$PCKGVEND/$PCKGNAME ]; then
+    mkdir /tmp/staging/$PCKGVEND/$PCKGNAME
 fi

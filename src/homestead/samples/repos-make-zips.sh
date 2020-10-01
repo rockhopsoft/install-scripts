@@ -5,7 +5,7 @@ set -x
 REPODIR="~/repos"
 
 # Package name of Survloop extension
-REPONAME="survlooporg"
+PCKGNAME="survlooporg"
 
 cd $REPODIR
 rm -r zipz-repos
@@ -19,6 +19,6 @@ cd $REPODIR/survloop-libraries
 tar -czvf survloop-libraries.tar.gz ./src
 mv survloop-libraries.tar.gz ../zipz-repos/survloop-libraries.tar.gz
 
-cd $REPODIR/$REPONAME
-tar -czvf $REPONAME.tar.gz ./src
-mv $REPONAME.tar.gz ../zipz-repos/$REPONAME.tar.gz
+cd $REPODIR/$PCKGNAME
+tar -czvf $PCKGNAME.tar.gz ./src
+mv $PCKGNAME.tar.gz ../zipz-repos/$PCKGNAME.tar.gz

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-DIR="rockhopsoft.com"
+DIR='survloop.org'
 
 if [ $# -eq 1 ]; then
     DIR="$DIR-production"

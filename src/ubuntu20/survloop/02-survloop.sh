@@ -8,7 +8,7 @@ if [ $# -eq 0 ]; then
     echo '---------------------'
     echo 'To run this with all commands printing to the screen,'
     echo 'cancel this (Ctrl+C), and re-run this script with any parameter:'
-    echo '# bash /root/install-scripts/ubuntu20/survloop/02-survloop.sh debug'
+    echo '# bash /root/install-scripts/src/ubuntu20/survloop/02-survloop.sh debug'
 fi
 echo '====================='
 echo ''
@@ -63,7 +63,7 @@ ufw allow 'Nginx HTTPS'
 echo "y" | ufw enable
 echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php7.4-zip php7.4-gd ghostscript
 systemctl reload nginx
-cp /root/install-scripts/ubuntu20/survloop/samples/nginx-example.com /etc/nginx/sites-available/$DIR
+cp /root/install-scripts/src/ubuntu20/survloop/samples/nginx-example.com /etc/nginx/sites-available/$DIR
 sed -i "s/example.com/$DIR/g" /etc/nginx/sites-available/$DIR
 sed -i "s/server.ip.address/$IP/g" /etc/nginx/sites-available/$DIR
 #nano /etc/nginx/sites-available/$DIR
@@ -183,16 +183,15 @@ echo '--------'
 echo 'Create Super User Deployment Tools'
 echo '=================================='
 mkdir /home/$SUPUSER/survloop/
-cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-from-staging.sh /home/$SUPUSER/survloop/deploy-update-from-staging.sh
-cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-from-space.sh /home/$SUPUSER/survloop/deploy-update-from-space.sh
-cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-core.sh /home/$SUPUSER/survloop/deploy-update-core.sh
-cp /root/install-scripts/ubuntu20/survloop/samples/deploy-update-dirs.sh /home/$SUPUSER/survloop/deploy-update-dirs.sh
+cp /root/install-scripts/src/ubuntu20/survloop/samples/deploy-update-*.sh /home/$SUPUSER/survloop/
 
-#sed -i "s/SurvloopOrg/$PCKGCLASS/g" /home/$SUPUSER/survloop/deploy-update-from-space.sh
-sed -i "s/SurvloopOrg/$PCKGCLASS/g" /home/$SUPUSER/survloop/deploy-update-from-space.sh
+sed -i "s/DIR='survloop.org'/DIR='$DIR'/g" /home/$SUPUSER/survloop/*.sh
+sed -i "s/SUPUSER='survuser'/SUPUSER='$SUPUSER'/g" /home/$SUPUSER/survloop/*.sh
+sed -i "s/PCKGVEND='rockhopsoft'/PCKGVEND='$PCKGVEND'/g" /home/$SUPUSER/survloop/*.sh
+sed -i "s/PCKGNAME='survlooporg'/PCKGNAME='$PCKGNAME'/g" /home/$SUPUSER/survloop/*.sh
 
-cp /root/install-scripts/ubuntu20/survloop/samples/maintenance-mode.sh /home/$SUPUSER/survloop/maintenance-mode.sh
-cp /root/install-scripts/ubuntu20/survloop/samples/maintenance-index.php /home/$SUPUSER/survloop/maintenance-index.php
+cp /root/install-scripts/src/ubuntu20/survloop/samples/maintenance-mode.sh /home/$SUPUSER/survloop/maintenance-mode.sh
+cp /root/install-scripts/src/ubuntu20/survloop/samples/maintenance-index.php /home/$SUPUSER/survloop/maintenance-index.php
 mkdir /home/$SUPUSER/staging/
 mkdir /home/$SUPUSER/staging/rockhopsoft
 mkdir /home/$SUPUSER/staging/rockhopsoft/survloop

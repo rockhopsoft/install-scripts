@@ -5,16 +5,16 @@ echo 'Deploying Code from Staging Directory...'
 set -x
 
 DIR="$1"
-SUPUSER="rocky"
-PCKGA="rockhopsoft"
-PCKGB="rockhopsoftcom"
+SUPUSER='survuser'
+PCKGVEND='rockhopsoft'
+PCKGNAME='survlooporg'
 
 set +x
 
 echo 'Making Copies From Staging...'
 cp -r /home/$SUPUSER/staging/rockhopsoft/survloop/src /tmp/staging/rockhopsoft/survloop
 cp -r /home/$SUPUSER/staging/rockhopsoft/survloop-libraries/src /tmp/staging/rockhopsoft/survloop-libraries
-cp -r /home/$SUPUSER/staging/$PCKGA/$PCKGB/src /tmp/staging/$PCKGA/$PCKGB
+cp -r /home/$SUPUSER/staging/$PCKGVEND/$PCKGNAME/src /tmp/staging/$PCKGVEND/$PCKGNAME
 
 set -x
 
@@ -26,9 +26,9 @@ rm -r /tmp/backup/rockhopsoft/survloop-libraries/src
 mv /var/www/$DIR/vendor/rockhopsoft/survloop-libraries/src /tmp/backup/rockhopsoft/survloop-libraries
 mv /tmp/staging/rockhopsoft/survloop-libraries/src /var/www/$DIR/vendor/rockhopsoft/survloop-libraries
 
-rm -r /tmp/backup/$PCKGA/$PCKGB/src
-mv /var/www/$DIR/vendor/$PCKGA/$PCKGB/src /tmp/backup/$PCKGA/$PCKGB
-mv /tmp/staging/$PCKGA/$PCKGB/src /var/www/$DIR/vendor/$PCKGA/$PCKGB
+rm -r /tmp/backup/$PCKGVEND/$PCKGNAME/src
+mv /var/www/$DIR/vendor/$PCKGVEND/$PCKGNAME/src /tmp/backup/$PCKGVEND/$PCKGNAME
+mv /tmp/staging/$PCKGVEND/$PCKGNAME/src /var/www/$DIR/vendor/$PCKGVEND/$PCKGNAME
 
 set +x
 
@@ -43,9 +43,9 @@ fi
 set -x
 
 cd /var/www/$DIR
-php artisan optimize:clear
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
+php artisan optimize:clear
 curl http://$DIR/css-reload
 
 set +x

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-DIR=survloop.org
+DIR='survloop.org'
 
 if [ $1 = 'on' ]
 then

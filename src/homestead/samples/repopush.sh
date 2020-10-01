@@ -10,7 +10,6 @@ HOMEDIR="~/homestead/code"
 # Installation sub-directory within synched virtual server
 INSTDIR="survloop"
 
-
 rm -r $HOMEDIR/$INSTDIR/vendor/rockhopsoft/survloop/src
 cp -r $REPODIR/survloop/src $HOMEDIR/$INSTDIR/vendor/rockhopsoft/survloop/
 
@@ -21,6 +20,6 @@ rm -r $HOMEDIR/$INSTDIR/app/Models/*
 
 cd $HOMEDIR/$INSTDIR/
 composer dump-autoload
-php artisan optimize:clear
 echo "0" | php artisan vendor:publish --force
-curl http://$DIR/css-reload
+php artisan optimize:clear
+curl http://$INSTDIR.local/css-reload
