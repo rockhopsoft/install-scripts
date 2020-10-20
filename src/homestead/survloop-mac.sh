@@ -69,7 +69,7 @@ echo '========================='
 if [ -d "$DIR" ]; then
     rm -R ./$DIR
 fi
-composer create-project laravel/laravel ./$DIR 8.0.* --no-dev
+composer create-project laravel/laravel $DIR "8.0.*" --no-dev
 if [ -d "./$DIR/orig.env" ]; then
     rm -f ./$DIR/orig.env
 fi
@@ -94,8 +94,8 @@ echo '--------'
 if [ "$NOPCKG" == "n" ]; then
     echo 'Install Survloop & Extension Package'
     echo '===================================='
-    composer require $PCKGVEND/$PCKGNAME
-    cp -f ../install-scripts/samples/laravel-composer-package.json composer.json.txt
+    composer require paragonie/random_compat mpdf/mpdf $PCKGVEND/$PCKGNAME
+    cp -f ../install-scripts/src/samples/laravel-composer-package.json composer.json.txt
     SLPKG='rockhopsoft\/survlooporg'
     PCKGFULL="$PCKGVEND\/$PCKGNAME"
     perl -pi -w -e "s/$SLPKG/$PCKGFULL/g" composer.json.txt
@@ -103,20 +103,20 @@ if [ "$NOPCKG" == "n" ]; then
     rm composer.json
     mv composer.json.txt composer.json
     mv config/app.php config/app.orig.php
-    cp -f ../install-scripts/samples/laravel-config-app-package.php config/app.php
+    cp -f ../install-scripts/src/samples/laravel-config-app-package.php config/app.php
     perl -pi -w -e "s/SurvloopOrg/$PCKGCLASS/g" $DIR/config/app.php
     composer update
     php artisan optimize:clear
 else
     echo 'Install Survloop'
     echo '================'
-    composer require rockhopsoft/survloop
+    composer require paragonie/random_compat mpdf/mpdf rockhopsoft/survloop
     rm composer.json
-    cp -f ../install-scripts/samples/laravel-composer.json composer.json
+    cp -f ../install-scripts/src/samples/laravel-composer.json composer.json
     composer update
     php artisan optimize:clear
     mv config/app.php config/app.orig.php
-    cp -f ../install-scripts/samples/laravel-config-app.php config/app.php
+    cp -f ../install-scripts/src/samples/laravel-config-app.php config/app.php
 fi
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
