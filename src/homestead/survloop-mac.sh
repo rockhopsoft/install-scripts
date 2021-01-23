@@ -69,7 +69,7 @@ echo '========================='
 if [ -d "$DIR" ]; then
     rm -R ./$DIR
 fi
-composer create-project laravel/laravel $DIR "8.0.*" --no-dev
+composer create-project laravel/laravel $DIR "8.*"
 if [ -d "./$DIR/orig.env" ]; then
     rm -f ./$DIR/orig.env
 fi
