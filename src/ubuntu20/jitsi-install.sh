@@ -3,7 +3,7 @@ set -x
 
 DOMAIN="$1"
 IP="$2"
-EMAIL="$3"
+APPNAME="$3"
 
 # To be run under sudo su...
 
@@ -37,6 +37,36 @@ apt install -y jitsi-meet
 hostnamectl set-hostname $DOMAIN
 echo "127.0.0.1 $DOMAIN" >> /etc/hosts
 systemctl reload nginx
+
+
+echo ''
+echo '=================================='
+echo ''
+read -p $'Customize site logo PNG image URL:\n(press enter for none)\n' IMGLOGO
+if [ -z "$IMGLOGO" ]
+then
+else
+	wget $IMGLOGO
+	cp $FILENAME /usr/share/jitsi-meet/images/watermark-custom.png
+	sed -i "s/images\/watermark.svg/images\/watermark-custom.png/g" /usr/share/jitsi-meet/interface_config.js
+	FILENAME="${IMGLOGO##*/}"
+
+	read -p $'Customize site favicon image URL:\n(press enter for none)\n' FAVLOGO
+	if [ -z "$FAVLOGO" ]
+	then
+	else
+		FILENAME="${FAVLOGO##*/}"
+		wget $IMGLOGO
+		mv /usr/share/jitsi-meet/images/favicon.ico /usr/share/jitsi-meet/images/favicon-orig.ico
+		cp $FILENAME /usr/share/jitsi-meet/images/favicon.ico
+
+	fi
+	sed -i "s/APP_NAME: 'Jitsi Meet'/APP_NAME: '$APPNAME'/g" /usr/share/jitsi-meet/interface_config.js
+	sed -i "s/NATIVE_APP_NAME: 'Jitsi Meet'/NATIVE_APP_NAME: '$APPNAME'/g" /usr/share/jitsi-meet/interface_config.js
+	sed -i "s/JITSI_WATERMARK_LINK: 'https:\/\/jitsi.org'/JITSI_WATERMARK_LINK: 'https:\/\/$DOMAIN'/g" /usr/share/jitsi-meet/interface_config.js
+
+fi
+
 
 echo ''
 echo '=================================='
