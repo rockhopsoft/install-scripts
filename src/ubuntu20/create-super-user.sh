@@ -36,6 +36,7 @@ echo ''
 echo 'Ubuntu 20.04 Super User Initiation Settings'
 echo '-------------------------------------------'
 echo "User or VPN IP Address: $IP"
+echo "Custom SSH Port:        $PORT"
 echo "Suer User Name:         $USR"
 echo "YubiKey Token:          $YUBI"
 echo '==========================================='
@@ -49,6 +50,7 @@ if [ "$DEBUG" = "y" ]
 then
     set -x
 fi
+apt-add-repository universe 
 apt update
 echo "Y" | apt upgrade
 adduser $USR
