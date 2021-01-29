@@ -18,8 +18,6 @@ read -p $'What is the domain name for this Survloop installation?\n(e.g. example
 echo ''
 read -p $'What is the IP address for this server?\n(e.g. 123.456.789.012) \n' IP
 echo ''
-read -p $'Would you like to install an SSL certificate using EFF\'s Certbot?\n("y" or "n") \n' SSLCERT
-echo ''
 read -p $'Do you want a standalone Survloop installation? If not, you need a package which extends the Survloop engine.\n("y" or "n") \n' NOPCKG
 echo ''
 PCKGVEND=""
@@ -45,7 +43,6 @@ if [ "$NOPCKG" == "n" ]; then
     echo "Package:       $PCKGVEND/$PCKGNAME"
     echo "Package Class: $PCKGCLASS"
 fi
-echo "Install SSL?   $SSLCERT"
 echo '=============================='
 if [ $# -eq 1 ]; then
     set -x
@@ -71,6 +68,8 @@ ln -s /etc/nginx/sites-available/$DIR /etc/nginx/sites-enabled/
 unlink /etc/nginx/sites-enabled/default
 nginx -t
 systemctl reload nginx
+echo ''
+read -p $'Would you like to install an SSL certificate using EFF\'s Certbot?\n("y" or "n") \n' SSLCERT
 if [ "$SSLCERT" == "y" ]; then
     echo ''
     echo '--'

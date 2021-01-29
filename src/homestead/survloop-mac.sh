@@ -12,19 +12,16 @@ if [ $# -eq 0 ]; then
 fi
 echo '==============================='
 echo ''
-read -p $'What is the directory for this local Survloop installation (relative to current folder)?\nIf it exists, it will be deleted for a fresh install.\n(e.g. survloop) \n' DIR
+read -p $'What is the directory for this local Survloop installation (relative to current folder)?\nIf it exists, it will be deleted for a fresh install.\n(e.g. survloop)\n' dir
 echo ''
-read -p $'Do you want a standalone Survloop installation?\nIf not, you need a package which extends the Survloop engine.\n("y" or "n") \n' NOPCKG
+read -p $'Do you want a standalone Survloop installation?\nIf not, you need a package which extends the Survloop engine.\n("y" or "n")\n' nopckg
 echo ''
-PCKGVEND=""
-PCKGNAME=""
-PCKGCLASS=""
-if [ "$NOPCKG" == "n" ]; then
-    read -p $'What is the your package vendor name?\n(e.g. rockhopsoft) \n' PCKGVEND
+if [ "$nopckg" == "n" ]; then
+    read -p $'What is the vender path for package vendor?\n(e.g. rockhopsoft/survlooporg)\n' pckgpath
     echo ''
-    read -p $'What is the name of your package?\n(e.g. survlooporg) \n' PCKGNAME
+    read -p $'What is the your package vendor name?\n(e.g. RockHopSoft)\n' classvend
     echo ''
-    read -p $'What is the top-level class name for your package?\n(e.g. SurvloopOrg) \n' PCKGCLASS
+    read -p $'What is the class name of your package?\n(e.g. SurvloopOrg)\n' classname
     echo ''
 fi
 echo '--'
@@ -32,61 +29,54 @@ echo '----'
 echo '--------'
 echo 'Survloop Installation Settings'
 echo '------------------------------'
-echo "New Directory: $DIR"
-if [ "$NOPCKG" == "n" ]; then
-    echo "Package:       $PCKGVEND/$PCKGNAME"
-    echo "Package Class: $PCKGCLASS"
+echo "New Directory:     $dir"
+if [ "$nopckg" == "n" ]; then
+    echo "Package Class:     $classvend\\$classname"
+    echo "Package Directory: $pckgpath"
 fi
 echo '=============================='
-
-sed -i "s/INSTDIR='survloop'/INSTDIR='$DIR'/g" install-scripts/src/homestead/samples/*.sh
-sed -i "s/SUPUSER='survuser'/SUPUSER='$SUPUSER'/g" install-scripts/src/homestead/samples/*.sh
-sed -i "s/PCKGVEND='rockhopsoft'/PCKGVEND='$PCKGVEND'/g" install-scripts/src/homestead/samples/*.sh
-sed -i "s/PCKGNAME='survlooporg'/PCKGNAME='$PCKGNAME'/g" install-scripts/src/homestead/samples/*.sh
-sed -i "s/PCKGCLASS='SurvloopOrg'/PCKGCLASS='$PCKGCLASS'/g" install-scripts/src/homestead/samples/*.sh
 
 if [ $# -eq 1 ]; then
     set -x
 fi
-echo ''
-echo '--'
-echo '----'
-echo '--------'
-echo 'Install Homebrew Helpers'
-echo '========================'
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-xcode-select --install
-brew install perl
-brew install php
-brew services start php
-brew link --force --overwrite php@7.4
+
+if [ ! -f install-scripts/src/homestead/helpers-installed.txt ]; then
+    bash install-scripts/src/homestead/survloop-mac-run-once.sh
+
+    sed -i "s/INSTDIR='survloop'/INSTDIR='$dir'/g" install-scripts/src/homestead/samples/*.sh
+    sed -i "s/SUPUSER='survuser'/SUPUSER='$SUPUSER'/g" install-scripts/src/homestead/samples/*.sh
+    sed -i "s/pckgpath='rockhopsoft\/survlooporg'/pckgvend='$pckgvend'/g" install-scripts/src/homestead/samples/*.sh
+    sed -i "s/classname='SurvloopOrg'/classname='$classname'/g" install-scripts/src/homestead/samples/*.sh
+fi
+
 echo ''
 echo '--'
 echo '----'
 echo '--------'
 echo 'Install Laravel Framework'
 echo '========================='
-if [ -d "$DIR" ]; then
-    rm -R ./$DIR
+if [ -d "$dir" ]; then
+    rm -R ./$dir
 fi
-composer create-project laravel/laravel $DIR "8.*"
-if [ -d "./$DIR/orig.env" ]; then
-    rm -f ./$DIR/orig.env
+composer create-project laravel/laravel $dir "8.5.*"
+if [ -d "./$dir/orig.env" ]; then
+    rm -f ./$dir/orig.env
 fi
-mv ./$DIR/.env ./$DIR/orig.env
-cp ./install-scripts/src/homestead/samples/survloop.env $DIR/env.txt
+mv ./$dir/.env ./$dir/orig.env
+cp ./install-scripts/src/homestead/samples/survloop.env $dir/env.txt
 if [ "$NOPCKG" == "n" ]; then
-    perl -pi -w -e "s/APP_NAME=Survloop/APP_NAME=$PCKGCLASS/g" $DIR/env.txt
-    perl -pi -w -e "s/survloop.local/$DIR.local/g" $DIR/env.txt
-    perl -pi -w -e "s/DB_DATABASE=survloop/DB_DATABASE=$DIR/g" $DIR/env.txt
+    perl -pi -w -e "s/APP_NAME=Survloop/APP_NAME=$classname/g" $dir/env.txt
+    perl -pi -w -e "s/survloop.local/$dir.local/g" $dir/env.txt
+    perl -pi -w -e "s/DB_DATABASE=survloop/DB_DATABASE=$dir/g" $dir/env.txt
 fi
-mv ./$DIR/env.txt ./$DIR/.env
+mv ./$dir/env.txt ./$dir/.env
 echo 'Laravel environment file updated.'
-cd $DIR
+cd $dir
 php artisan key:generate
 #php artisan cache:clear
-composer require laravel/ui
+COMPOSER_MEMORY_LIMIT=-1 composer require laravel/ui paragonie/random_compat mpdf/mpdf
 php artisan ui vue --auth
+composer require rockhopsoft/survloop "0.3.*"
 echo ''
 echo '--'
 echo '----'
@@ -94,24 +84,23 @@ echo '--------'
 if [ "$NOPCKG" == "n" ]; then
     echo 'Install Survloop & Extension Package'
     echo '===================================='
-    composer require paragonie/random_compat mpdf/mpdf $PCKGVEND/$PCKGNAME
+    composer require $pckgpath
     cp -f ../install-scripts/src/samples/laravel-composer-package.json composer.json.txt
-    SLPKG='rockhopsoft\/survlooporg'
-    PCKGFULL="$PCKGVEND\/$PCKGNAME"
-    perl -pi -w -e "s/$SLPKG/$PCKGFULL/g" composer.json.txt
-    perl -pi -w -e "s/SurvloopOrg/$PCKGCLASS/g" composer.json.txt
-    rm composer.json
+    perl -pi -w -e "s/rockhopsoft\/survlooporg/$pckgpath/g" composer.json.txt
+    perl -pi -w -e "s/RockHopSoft\/SurvloopOrg/$classvend\/$classname/g" composer.json.txt
+    perl -pi -w -e "s/SurvloopOrg/$classname/g" composer.json.txt
+    mv composer.json composer.json-orig
     mv composer.json.txt composer.json
     mv config/app.php config/app.orig.php
     cp -f ../install-scripts/src/samples/laravel-config-app-package.php config/app.php
-    perl -pi -w -e "s/SurvloopOrg/$PCKGCLASS/g" $DIR/config/app.php
+    perl -pi -w -e "s/RockHopSoft\/SurvloopOrg/$classvend\/$classname/g" config/app.php
+    perl -pi -w -e "s/SurvloopOrg/$classname/g" config/app.php
     composer update
     php artisan optimize:clear
 else
     echo 'Install Survloop'
     echo '================'
-    composer require paragonie/random_compat mpdf/mpdf rockhopsoft/survloop
-    rm composer.json
+    mv composer.json composer.json-orig
     cp -f ../install-scripts/src/samples/laravel-composer.json composer.json
     composer update
     php artisan optimize:clear
@@ -131,9 +120,9 @@ php artisan db:seed --force --class=ZipCodeSeeder2
 php artisan db:seed --force --class=ZipCodeSeeder3
 php artisan db:seed --force --class=ZipCodeSeeder4
 if [ "$NOPCKG" == "n" ]; then
-    echo "yes" | php artisan db:seed --force --class=$PCKGCLASS
+    echo "yes" | php artisan db:seed --force --class=$classname
 fi
 #chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
 php artisan optimize:clear
 composer dump-autoload
-curl http://$DIR.local/css-reload
+curl http://$dir.local/css-reload

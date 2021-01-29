@@ -35,9 +35,8 @@ apt update
 apt install -y jitsi-meet
 
 hostnamectl set-hostname $DOMAIN
-echo "127.0.0.1 $DOMAIN" >> /etc/hosts
+echo "127.0.0.1 localhost $DOMAIN $IP" >> /etc/hosts
 systemctl reload nginx
-
 
 echo ''
 echo '=================================='
