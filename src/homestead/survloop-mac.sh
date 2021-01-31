@@ -41,7 +41,18 @@ if [ $# -eq 1 ]; then
 fi
 
 if [ ! -f install-scripts/src/homestead/helpers-installed.txt ]; then
-    bash install-scripts/src/homestead/survloop-mac-run-once.sh
+    echo '------------------------'
+    echo 'Install Homebrew Helpers'
+    echo '========================'
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    xcode-select --install
+    brew update
+    brew install perl
+    brew install php@7.4
+    brew services start php@7.4
+    brew link php@7.4 --force
+    brew link --force --overwrite php@7.4
+    echo 'Helpers installed.' >> install-scripts/src/homestead/helpers-installed.txt
 
     sed -i "s/INSTDIR='survloop'/INSTDIR='$dir'/g" install-scripts/src/homestead/samples/*.sh
     sed -i "s/SUPUSER='survuser'/SUPUSER='$SUPUSER'/g" install-scripts/src/homestead/samples/*.sh
@@ -63,17 +74,15 @@ if [ -d "./$dir/orig.env" ]; then
     rm -f ./$dir/orig.env
 fi
 mv ./$dir/.env ./$dir/orig.env
-cp ./install-scripts/src/homestead/samples/survloop.env $dir/env.txt
+cp ./install-scripts/src/homestead/samples/survloop.env $dir/.env
 if [ "$NOPCKG" == "n" ]; then
-    perl -pi -w -e "s/APP_NAME=Survloop/APP_NAME=$classname/g" $dir/env.txt
-    perl -pi -w -e "s/survloop.local/$dir.local/g" $dir/env.txt
-    perl -pi -w -e "s/DB_DATABASE=survloop/DB_DATABASE=$dir/g" $dir/env.txt
+    perl -pi -w -e "s/APP_NAME=Survloop/APP_NAME=$classname/g" $dir/.env
+    perl -pi -w -e "s/survloop.local/$dir.local/g" $dir/.env
+    perl -pi -w -e "s/DB_DATABASE=survloop/DB_DATABASE=$dir/g" $dir/.env
 fi
-mv ./$dir/env.txt ./$dir/.env
 echo 'Laravel environment file updated.'
 cd $dir
 php artisan key:generate
-#php artisan cache:clear
 COMPOSER_MEMORY_LIMIT=-1 composer require laravel/ui paragonie/random_compat mpdf/mpdf
 php artisan ui vue --auth
 composer require rockhopsoft/survloop "0.3.*"
@@ -96,20 +105,26 @@ if [ "$NOPCKG" == "n" ]; then
     perl -pi -w -e "s/RockHopSoft\/SurvloopOrg/$classvend\/$classname/g" config/app.php
     perl -pi -w -e "s/SurvloopOrg/$classname/g" config/app.php
     composer update
-    php artisan optimize:clear
+    php artisan config:clear
+    php artisan route:clear
+    php artisan view:clear
 else
     echo 'Install Survloop'
     echo '================'
     mv composer.json composer.json-orig
     cp -f ../install-scripts/src/samples/laravel-composer.json composer.json
     composer update
-    php artisan optimize:clear
+    php artisan config:clear
+    php artisan route:clear
+    php artisan view:clear
     mv config/app.php config/app.orig.php
     cp -f ../install-scripts/src/samples/laravel-config-app.php config/app.php
 fi
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
-php artisan optimize:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 composer dump-autoload
 DBKEY='\\Illuminate\\Support\\Facades\\DB'
 perl -pi -w -e "s/$DBKEY::statement('SET SESSION sql_require_primary_key=0'); / /g" database/migrations/*.php
@@ -122,7 +137,9 @@ php artisan db:seed --force --class=ZipCodeSeeder4
 if [ "$NOPCKG" == "n" ]; then
     echo "yes" | php artisan db:seed --force --class=$classname
 fi
-#chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
-php artisan optimize:clear
+#sudo chown -R $USER:_www storage storage bootstrap/cache resources/views database app/Models
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 composer dump-autoload
 curl http://$dir.local/css-reload

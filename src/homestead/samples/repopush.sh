@@ -21,5 +21,7 @@ rm -r $HOMEDIR/$INSTDIR/app/Models/*
 cd $HOMEDIR/$INSTDIR/
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
-php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 curl http://$INSTDIR.local/css-reload

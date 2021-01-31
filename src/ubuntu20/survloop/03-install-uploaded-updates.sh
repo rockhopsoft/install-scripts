@@ -23,5 +23,7 @@ mv src $INSTDIR/vendor/$PCKGVEND/$PCKGNAME/src
 
 cd $INSTDIR
 echo "yes" | composer dump-autoload
-php artisan optimize:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 echo "0" | php artisan vendor:publish --force

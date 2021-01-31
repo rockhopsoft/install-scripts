@@ -142,7 +142,7 @@ URLSERVR="https:\/\/$DIR"
 sed -i "s/APP_URL=$URLLOCAL/APP_URL=$URLSERVR/g" /var/www/$DIR/.env
 nano /var/www/$DIR/.env
 echo 'Laravel environment file updated.'
-php artisan config:cache
+php artisan config:clear
 echo ''
 echo '--'
 echo '----'
@@ -158,7 +158,9 @@ if [ "$NOPCKG" == "n" ]; then
     sed -i "s/SurvloopOrg/$PCKGCLASS/g" /var/www/$DIR/composer.json
     composer clear-cache
     composer install --optimize-autoloader --no-dev
-    php artisan optimize:clear
+    php artisan config:clear
+    php artisan route:clear
+    php artisan view:clear
     cp -f /root/samples/laravel-config-app-package.php /var/www/$DIR/config/app.php
     sed -i "s/SurvloopOrg/$PCKGCLASS/g" /var/www/$DIR/config/app.php
 else
@@ -168,12 +170,16 @@ else
     cp -f /root/samples/laravel-composer.json /var/www/$DIR/composer.json
     composer clear-cache
     composer install --optimize-autoloader --no-dev
-    php artisan optimize:clear
+    php artisan config:clear
+    php artisan route:clear
+    php artisan view:clear
     cp -f /root/samples/laravel-config-app.php /var/www/$DIR/config/app.php
 fi
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
-php artisan optimize:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 composer dump-autoload
 echo ''
 echo '--'
@@ -228,7 +234,9 @@ if [ "$NOPCKG" == "n" ]; then
     echo "yes" | php artisan db:seed --force --class=$PCKGCLASS
 fi
 chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
-php artisan optimize:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 composer dump-autoload --optimize
 curl http://$DIR/css-reload
 echo ''
