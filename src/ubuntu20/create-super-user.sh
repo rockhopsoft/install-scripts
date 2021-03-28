@@ -18,6 +18,8 @@ then
 fi
 echo '=================================='
 echo ''
+read -p $'Was is the IP address for this server?\n(e.g. 321.654.987.210)\n' SERVIP
+echo ''
 read -p $'Instead of root, what super user name will manage this server?\n(e.g. survuser)\n' USR
 echo ''
 read -p $'From which fixed IP address will you connect from for this server? This could be your super user\'s VPN or home router IP.\n(e.g. 123.456.789.012)\n' IP
@@ -30,12 +32,13 @@ YUBI=""
 if [ "$WANTYUBI" = "y" ]
 then
     read -p $'Please press the button on your YubiKey device:\n' YUBI
-    YUBI=${YUBI:0:12} 
+    YUBI=${YUBI:0:12}
 fi
 echo ''
 echo 'Ubuntu 20.04 Super User Initiation Settings'
 echo '-------------------------------------------'
 echo "User or VPN IP Address: $IP"
+echo "Server IP Address:      $SERVIP"
 echo "Custom SSH Port:        $PORT"
 echo "Suer User Name:         $USR"
 echo "YubiKey Token:          $YUBI"
@@ -50,7 +53,7 @@ if [ "$DEBUG" = "y" ]
 then
     set -x
 fi
-apt-add-repository universe 
+apt-add-repository universe
 apt update
 echo "Y" | apt upgrade
 adduser $USR
@@ -85,8 +88,11 @@ sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/#LogLevel INFO/LogLevel VERBOSE/g' /etc/ssh/sshd_config
 ufw default deny incoming
 ufw default allow outgoing
+#ufw allow proto tcp from $IP to $SERVIP port $PORT
+#ufw limit ssh
 ufw limit from $IP to any port $PORT
 echo "y" | ufw enable
+systemctl restart sshd
 echo ''
 echo '--'
 echo '----'
