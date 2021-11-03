@@ -58,7 +58,10 @@ echo "Y" | apt install nginx
 ufw allow 'Nginx HTTP'
 ufw allow 'Nginx HTTPS'
 echo "y" | ufw enable
-echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php7.4-zip php7.4-gd ghostscript
+#echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php7.4-zip php7.4-gd ghostscript
+LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php8.0-zip php8.0-gd ghostscript
+echo "Y" | apt install php8.0-cli php8.0-bcmath php8.0-cli php8.0-common php8.0-dev php8.0-fpm php8.0-gd php8.0-mbstring php8.0-mysql php8.0-opcache php8.0-readline php8.0-xml php8.0-zip
 systemctl reload nginx
 cp /root/install-scripts/src/ubuntu20/survloop/samples/nginx-example.com /etc/nginx/sites-available/$DIR
 sed -i "s/example.com/$DIR/g" /etc/nginx/sites-available/$DIR
@@ -77,7 +80,7 @@ echo '=============================='
 /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
 /sbin/mkswap /var/swap.1
 /sbin/swapon /var/swap.1
-echo "Y" | apt-get install php-pear pkg-config php-xml php7.4-xml php7.4-cli php-dev
+echo "Y" | apt-get install php-pear pkg-config php-xml php8.0-xml php8.0-cli php-dev
 wget http://pear.php.net/go-pear.phar
 echo ''
 echo '--- For Survloop Installations, ---'
@@ -103,8 +106,25 @@ php artisan key:generate
 chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
 php artisan cache:clear
 composer require laravel/fortify
+php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 systemctl reload nginx
 ufw status verbose
+echo ''
+echo '--'
+echo '----'
+echo '--------'
+echo 'Install Redis'
+echo '========================='
+echo "Y" | apt install redis-server
+sed -i "s/supervised no/supervised systemd/g" /etc/redis/redis.conf
+sed -i "s/supervised systemd      - no/supervised no      - no/g" /etc/redis/redis.conf
+systemctl restart redis.service
+sed -i "s/CACHE_DRIVER=file/CACHE_DRIVER=redis/g" /var/www/$DIR/.env
+echo "MODEL_CACHE_ENABLED=true" >> /var/www/$DIR/.env
+echo "MODEL_CACHE_STORE=redis" >> /var/www/$DIR/.env
+echo "REDIS_CLIENT=predis" >> /var/www/$DIR/.env
+echo 'More steps to automate later: https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-20-04'
+
 echo ''
 echo '--'
 echo '----'

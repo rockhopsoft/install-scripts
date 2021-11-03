@@ -55,6 +55,7 @@ then
 fi
 apt-add-repository universe
 apt update
+sudo dpkg --configure -a
 echo "Y" | apt upgrade
 adduser $USR
 usermod -aG sudo $USR
