@@ -88,7 +88,7 @@ echo '=============================='
 /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
 /sbin/mkswap /var/swap.1
 /sbin/swapon /var/swap.1
-echo "Y" | apt-get install php-pear pkg-config php-xml php8.0-xml php8.0-cli php-dev
+echo "Y" | apt-get install php-pear pkg-config php-xml php-cli php-dev
 wget http://pear.php.net/go-pear.phar
 echo ''
 echo '--- For Survloop Installations, ---'
