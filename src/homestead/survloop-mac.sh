@@ -48,10 +48,10 @@ if [ ! -f install-scripts/src/homestead/helpers-installed.txt ]; then
     xcode-select --install
     brew update
     brew install perl
-    brew install php@7.4
-    brew services start php@7.4
-    brew link php@7.4 --force
-    brew link --force --overwrite php@7.4
+    brew install php@8.0
+    brew services start php@8.0
+    brew link php@8.0 --force
+    brew link --force --overwrite php@8.0
     echo 'Helpers installed.' >> install-scripts/src/homestead/helpers-installed.txt
 
     sed -i "s/INSTDIR='survloop'/INSTDIR='$dir'/g" install-scripts/src/homestead/samples/*.sh
@@ -119,6 +119,9 @@ else
     mv config/app.php config/app.orig.php
     cp -f ../install-scripts/src/samples/laravel-config-app.php config/app.php
 fi
+
+# composer require components/jquery components/jqueryui doctrine/dbal fideloper/proxy forkawesome/fork-awesome genealabs/laravel-model-caching guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis rockhopsoft/survloop-images rockhopsoft/survloop-libraries summernote/summernote twbs/bootstrap
+
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
 php artisan config:clear

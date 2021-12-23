@@ -31,12 +31,14 @@ if [ "$NOPCKG" == "n" ]; then
     read -p $'What is the top-level class name for your package?\n(e.g. SurvloopOrg) \n' PCKGCLASS
     echo ''
 fi
+read -p $'Would you like to auto-install the Survloop database?\n("y" or "n") \n' INSTALLDB
+echo ''
 read -p $'Would you like to install an SSL certificate using EFF\'s Certbot?\n("y" or "n") \n' SSLCERT
 echo ''
 read -p $'Would you like to install a REDIS database on this server?\n("y" or "n") \n' INSTREDIS
 echo ''
-read -p $'Would you like to install Matomo analytics on this server?\n("y" or "n") \n' INSTREDIS
-echo ''
+#read -p $'Would you like to install Matomo analytics on this server?\n("y" or "n") \n' INSTMATOMO
+#echo ''
 read -p $'Would you like to install Advanced Intrusion Detection Environment AIDE?\n("y" or "n") \n' INSTAIDE
 echo ''
 echo '--'
@@ -100,6 +102,7 @@ echo "Y" | apt-get install curl
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 echo "Y" | apt-get install php-redis
 pecl install redis
+echo "\n extension = redis.io" >> /etc/php/8.0/fpm/php.ini
 echo ''
 echo '--'
 echo '----'
@@ -109,13 +112,17 @@ echo '========================='
 if [ -d "/var/www/$DIR" ]; then
     rm -R /var/www/$DIR
 fi
-composer create-project laravel/laravel /var/www/$DIR 8.5.* --no-dev
+composer create-project laravel/laravel /var/www/$DIR 8.6.* --no-dev
 chown -R $SUPUSER:$SUPUSER /var/www/$DIR
 cd /var/www/$DIR
 php artisan key:generate
-chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
+mkdir public/css
+mkdir public/fonts
+mkdir public/js
+mkdir public/pdf
+chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
 php artisan cache:clear
-composer require laravel/fortify
+echo "yes" | composer require laravel/fortify
 php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 systemctl reload nginx
 ufw status verbose
@@ -135,7 +142,13 @@ if [ "$INSTREDIS" == "y" ]; then
     echo "MODEL_CACHE_ENABLED=true" >> /var/www/$DIR/.env
     echo "MODEL_CACHE_STORE=redis" >> /var/www/$DIR/.env
     #echo "REDIS_CLIENT=predis" >> /var/www/$DIR/.env
+    echo '--------'
+    echo '--------'
+    echo '--------'
     echo 'More steps to automate later: https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-20-04'
+    echo '--------'
+    echo '--------'
+    echo '--------'
 fi
 echo ''
 echo '--'
@@ -188,6 +201,7 @@ else
     php artisan view:clear
     cp -f /root/samples/laravel-config-app.php /var/www/$DIR/config/app.php
 fi
+cp -f /var/www/$DIR/vendor/rockhopsoft/survloop/src/Overrides/database.php /var/www/$DIR/config/database.php
 composer dump-autoload
 echo "0" | php artisan vendor:publish --force
 php artisan config:clear
@@ -223,30 +237,34 @@ if [ "$NOPCKG" == "n" ]; then
 fi
 chown -R $SUPUSER:$SUPUSER /home/$SUPUSER/survloop
 chown -R $SUPUSER:$SUPUSER /home/$SUPUSER/staging
-echo ''
-echo '--'
-echo '----'
-echo '--------'
-echo 'Build Database with Laravel Migrations'
-echo '======================================'
-DBKEY='\\Illuminate\\Support\\Facades\\DB'
-sed -i "s/Schema::create/$DBKEY::statement('SET SESSION sql_require_primary_key=0'); Schema::create/g" /var/www/$DIR/database/migrations/*.php
-echo "yes" | php artisan migrate --force
-echo ''
-echo '--'
-echo '----'
-echo '--------'
-echo 'Fill Database with Laravel Seeders'
-echo '=================================='
-echo "yes" | php artisan db:seed --force --class=SurvloopSeeder
-echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder
-echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder2
-echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder3
-echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder4
-if [ "$NOPCKG" == "n" ]; then
-    echo "yes" | php artisan db:seed --force --class=$PCKGCLASS
+
+if [ "$INSTALLDB" == "y" ]; then
+    echo ''
+    echo '--'
+    echo '----'
+    echo '--------'
+    echo 'Build Database with Laravel Migrations'
+    echo '======================================'
+    DBKEY='\\Illuminate\\Support\\Facades\\DB'
+    sed -i "s/Schema::create/$DBKEY::statement('SET SESSION sql_require_primary_key=0'); Schema::create/g" /var/www/$DIR/database/migrations/*.php
+    echo "yes" | php artisan migrate --force
+    echo ''
+    echo '--'
+    echo '----'
+    echo '--------'
+    echo 'Fill Database with Laravel Seeders'
+    echo '=================================='
+    echo "yes" | php artisan db:seed --force --class=SurvloopSeeder
+    echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder
+    echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder2
+    echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder3
+    echo "yes" | php artisan db:seed --force --class=ZipCodeSeeder4
+    if [ "$NOPCKG" == "n" ]; then
+        echo "yes" | php artisan db:seed --force --class=$PCKGCLASS
+    fi
 fi
-chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models
+
+chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
