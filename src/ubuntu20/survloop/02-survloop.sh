@@ -112,7 +112,7 @@ echo '========================='
 if [ -d "/var/www/$DIR" ]; then
     rm -R /var/www/$DIR
 fi
-composer create-project laravel/laravel /var/www/$DIR 8.6.* --no-dev
+composer create-project laravel/laravel /var/www/$DIR 9.* --no-dev
 chown -R $SUPUSER:$SUPUSER /var/www/$DIR
 cd /var/www/$DIR
 php artisan key:generate
