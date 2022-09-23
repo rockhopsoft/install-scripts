@@ -99,8 +99,7 @@ php artisan cache:clear
 php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 #COMPOSER_MEMORY_LIMIT=-1 composer require rockhopsoft/survloop
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap
-# mews/captcha 
+/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
 /opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require -W maatwebsite/excel
@@ -123,16 +122,13 @@ sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models p
 
 
 
-
-
-
 cp -f /var/www/$DIR/vendor/rockhopsoft/survloop/src/Overrides/database.php /var/www/$DIR/config/database.php
-composer dump-autoload
-echo "0" | php artisan vendor:publish --force
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-composer dump-autoload
+/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar dump-autoload
+echo "0" | /opt/plesk/php/8.0/bin/php artisan vendor:publish --force
+/opt/plesk/php/8.0/bin/php artisan config:clear
+/opt/plesk/php/8.0/bin/php artisan route:clear
+/opt/plesk/php/8.0/bin/php artisan view:clear
+/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar dump-autoload
 echo ''
 echo '--'
 echo '----'
