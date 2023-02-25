@@ -18,12 +18,10 @@ then
 fi
 echo '================================================='
 echo ''
-read -p $'Was is the IP address for this server?\n(e.g. 321.654.987.210)\n' SERVIP
-echo ''
 read -p $'Instead of root, what super user name will manage this server?\n(e.g. survuser)\n' USR
 echo ''
-read -p $'Do you want to require YubiKey authentication?\n("y" or "n")\n' WANTYUBI
-echo ''
+#read -p $'Do you want to require YubiKey authentication?\n("y" or "n")\n' WANTYUBI
+#echo ''
 YUBI=""
 if [ "$WANTYUBI" = "y" ]
 then
@@ -33,9 +31,8 @@ fi
 echo ''
 echo 'Ubuntu 22.04 Super User Initiation Settings'
 echo '-------------------------------------------'
-echo "Server IP Address:      $SERVIP"
-echo "Suer User Name:         $USR"
-echo "YubiKey Token:          $YUBI"
+echo "Super User Name:         $USR"
+#echo "YubiKey Token:          $YUBI"
 echo '==========================================='
 echo ''
 echo '--'
@@ -62,40 +59,42 @@ then
     echo '--------'
     echo 'Install & Require YubiKey Authentication'
     echo '========================================'
-    apt install libpam-yubico -y
-    echo "$USR:$YUBI" >> /etc/yubico
-    sed -i 's/@include common-auth/auth required pam_yubico.so id=16 debug authfile=\/etc\/yubico/g' /etc/pam.d/sshd
-    sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
-    sed -i 's/# Authentication:/AuthenticationMethods publickey,keyboard-interactive/g' /etc/ssh/sshd_config
-    sed -i 's/UsePAM no/UsePAM yes/g' /etc/ssh/sshd_config
+    sudo apt-get install libpam-u2f
+    mkdir -p ~/.config/Yubico
+    pamu2fcfg > ~/.config/Yubico/u2f_keys
+#    echo "$USR:$YUBI" >> /etc/yubico
+#    sed -i 's/@include common-auth/auth required pam_yubico.so id=16 debug authfile=\/etc\/yubico/g' /etc/pam.d/sshd
+#    sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+#    sed -i 's/# Authentication:/AuthenticationMethods publickey,keyboard-interactive/g' /etc/ssh/sshd_config
+#    sed -i 's/UsePAM no/UsePAM yes/g' /etc/ssh/sshd_config
 else
-    sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
+#    sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
 fi
-systemctl restart sshd
+#systemctl restart sshd
 echo ''
 echo '--'
 echo '----'
 echo '--------'
-echo 'Edit Port and User IP in Uncomplicated Firewall (UFW)'
+echo 'Disable Root Login'
 echo '====================================================='
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/#LogLevel INFO/LogLevel VERBOSE/g' /etc/ssh/sshd_config
 systemctl restart sshd
-echo ''
-echo '--'
-echo '----'
-echo '--------'
-echo 'Disabling various over~networking'
-echo '================================='
-sed -i 's/#net.ipv4.conf.default.rp_filter=1/net.ipv4.conf.default.rp_filter=1/g' /etc/sysctl.conf
-sed -i 's/#net.ipv4.conf.all.rp_filter=1/net.ipv4.conf.all.rp_filter=1/g' /etc/sysctl.conf
-sed -i 's/#net.ipv4.conf.all.accept_redirects = 0/net.ipv4.conf.all.accept_redirects = 0/g' /etc/sysctl.conf
-sed -i 's/#net.ipv6.conf.all.accept_redirects = 0/net.ipv6.conf.all.accept_redirects = 0/g' /etc/sysctl.conf
-sed -i 's/#net.ipv4.conf.all.send_redirects = 0/net.ipv4.conf.all.send_redirects = 0/g' /etc/sysctl.conf
-sed -i 's/#net.ipv4.conf.all.accept_source_route = 0/net.ipv4.conf.all.accept_source_route = 0/g' /etc/sysctl.conf
-sed -i 's/#net.ipv6.conf.all.accept_source_route = 0/net.ipv6.conf.all.accept_source_route = 0/g' /etc/sysctl.conf
-sed -i 's/#net.ipv4.conf.all.log_martians = 1/net.ipv4.conf.all.log_martians = 1/g' /etc/sysctl.conf
-sysctl -p
+#echo ''
+#echo '--'
+#echo '----'
+#echo '--------'
+#echo 'Disabling various over~networking'
+#echo '================================='
+#sed -i 's/#net.ipv4.conf.default.rp_filter=1/net.ipv4.conf.default.rp_filter=1/g' /etc/sysctl.conf
+#sed -i 's/#net.ipv4.conf.all.rp_filter=1/net.ipv4.conf.all.rp_filter=1/g' /etc/sysctl.conf
+#sed -i 's/#net.ipv4.conf.all.accept_redirects = 0/net.ipv4.conf.all.accept_redirects = 0/g' /etc/sysctl.conf
+#sed -i 's/#net.ipv6.conf.all.accept_redirects = 0/net.ipv6.conf.all.accept_redirects = 0/g' /etc/sysctl.conf
+#sed -i 's/#net.ipv4.conf.all.send_redirects = 0/net.ipv4.conf.all.send_redirects = 0/g' /etc/sysctl.conf
+#sed -i 's/#net.ipv4.conf.all.accept_source_route = 0/net.ipv4.conf.all.accept_source_route = 0/g' /etc/sysctl.conf
+#sed -i 's/#net.ipv6.conf.all.accept_source_route = 0/net.ipv6.conf.all.accept_source_route = 0/g' /etc/sysctl.conf
+#sed -i 's/#net.ipv4.conf.all.log_martians = 1/net.ipv4.conf.all.log_martians = 1/g' /etc/sysctl.conf
+#sysctl -p
 echo ''
 echo '--'
 echo '----'
@@ -110,6 +109,6 @@ echo 'and log back in as the super user.'
 echo 'But to avoid getting locked out, '
 echo 'first test this in another terminal tab:'
 echo ''
-echo "ssh $USR@$SERVIP"
+echo "ssh $USR@<server_ip>"
 echo ''
 echo '==============================='
