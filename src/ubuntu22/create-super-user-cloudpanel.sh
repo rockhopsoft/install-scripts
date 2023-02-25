@@ -47,10 +47,10 @@ if [ "$DEBUG" = "y" ]
 then
     set -x
 fi
-apt-add-repository universe
-apt update
-sudo dpkg --configure -a
-echo "Y" | apt upgrade
+#apt-add-repository universe
+#apt update
+#sudo dpkg --configure -a
+#echo "Y" | apt upgrade
 adduser $USR
 usermod -aG sudo $USR
 rsync --archive --chown=$USR:$USR ~/.ssh /home/$USR
@@ -80,9 +80,6 @@ echo 'Edit Port and User IP in Uncomplicated Firewall (UFW)'
 echo '====================================================='
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/#LogLevel INFO/LogLevel VERBOSE/g' /etc/ssh/sshd_config
-ufw default deny incoming
-ufw default allow outgoing
-echo "y" | ufw enable
 systemctl restart sshd
 echo ''
 echo '--'
@@ -113,6 +110,6 @@ echo 'and log back in as the super user.'
 echo 'But to avoid getting locked out, '
 echo 'first test this in another terminal tab:'
 echo ''
-echo "ssh $USR@<server_ip>"
+echo "ssh $USR@$SERVIP"
 echo ''
 echo '==============================='
