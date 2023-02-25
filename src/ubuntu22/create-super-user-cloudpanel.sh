@@ -6,7 +6,7 @@ then
     DEBUG="y"
 fi
 echo '================================================='
-echo 'Ubuntu 20.04 - CloudPanel - Super User Initiation'
+echo 'Ubuntu 22.04 Super User Initiation for CloudPanel'
 echo '-------------------------------------------------'
 echo 'To be run on a DigitalOcean server set up with root SSH Key authentication.'
 if [ $# -eq 0 ]
@@ -14,7 +14,7 @@ then
     echo '-------------------------------------------------'
     echo 'To run this with all commands printing to the screen,'
     echo 'cancel this (Ctrl+C), and run this script with any parameter:'
-    echo '# bash ./ubuntu20/create-super-user-cloudpanel.sh debug'
+    echo '# bash ./ubuntu20/survloop/01-create-user.sh debug'
 fi
 echo '================================================='
 echo ''
@@ -31,7 +31,7 @@ then
     YUBI=${YUBI:0:12}
 fi
 echo ''
-echo 'Ubuntu 20.04 Super User Initiation Settings'
+echo 'Ubuntu 22.04 Super User Initiation Settings'
 echo '-------------------------------------------'
 echo "Server IP Address:      $SERVIP"
 echo "Suer User Name:         $USR"
@@ -76,7 +76,7 @@ echo ''
 echo '--'
 echo '----'
 echo '--------'
-echo 'Edit Uncomplicated Firewall (UFW)'
+echo 'Edit Port and User IP in Uncomplicated Firewall (UFW)'
 echo '====================================================='
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/#LogLevel INFO/LogLevel VERBOSE/g' /etc/ssh/sshd_config
