@@ -14,7 +14,7 @@ then
     echo '-------------------------------------------------'
     echo 'To run this with all commands printing to the screen,'
     echo 'cancel this (Ctrl+C), and run this script with any parameter:'
-    echo '# bash ./ubuntu20/survloop/01-create-user.sh debug'
+    echo '# bash ./ubuntu22/create-super-user-cloudpanel.sh debug'
 fi
 echo '================================================='
 echo ''
