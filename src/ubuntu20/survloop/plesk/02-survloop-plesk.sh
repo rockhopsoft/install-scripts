@@ -76,8 +76,8 @@ echo "Y" | apt-get install curl
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
-echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath 
-echo "Y" | apt install php8.0-zip php8.0-gd ghostscript php8.0-cli php8.0-bcmath 
+echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath
+echo "Y" | apt install php8.0-zip php8.0-gd ghostscript php8.0-cli php8.0-bcmath
 echo "Y" | apt install php8.0-common php8.0-dev php8.0-fpm php8.0-mbstring
 echo "Y" | apt install php8.0-mysql php8.0-opcache php8.0-readline php8.0-xml php8.0-zip php-redis
 pecl install redis
@@ -99,18 +99,14 @@ php artisan cache:clear
 php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 #COMPOSER_MEMORY_LIMIT=-1 composer require rockhopsoft/survloop
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap mews/captcha
+/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require -W maatwebsite/excel
-
 /opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar update
 
 cd $FULLDIR/laravel
-mkdir packages && mkdir packages/rockhopsoft
-mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src
-mkdir packages/rockhopsoft/survloop-images && mkdir packages/rockhopsoft/survloop-images/src
-mkdir packages/rockhopsoft/survloop-libraries && mkdir packages/rockhopsoft/survloop-libraries/src
+mkdir packages && mkdir packages/rockhopsoft && mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src && mkdir packages/rockhopsoft/surv-data && mkdir packages/rockhopsoft/surv-data/src
+mkdir packages/rockhopsoft/survloop-images && mkdir packages/rockhopsoft/survloop-images/src && mkdir packages/rockhopsoft/survloop-libraries && mkdir packages/rockhopsoft/survloop-libraries/src
 mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf
 mkdir storage/app/cache && mkdir storage/app/cache/css && mkdir storage/app/cache/js && mkdir storage/app/cache/html && mkdir storage/app/cache/php
 
