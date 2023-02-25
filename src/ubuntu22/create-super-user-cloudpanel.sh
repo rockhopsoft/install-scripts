@@ -20,8 +20,6 @@ echo '================================================='
 echo ''
 read -p $'Instead of root, what super user name will manage this server?\n(e.g. survuser)\n' USR
 echo ''
-#read -p $'Do you want to require YubiKey authentication?\n("y" or "n")\n' WANTYUBI
-#echo ''
 YUBI=""
 if [ "$WANTYUBI" = "y" ]
 then
@@ -32,7 +30,6 @@ echo ''
 echo 'Ubuntu 22.04 Super User Initiation Settings'
 echo '-------------------------------------------'
 echo "Super User Name:         $USR"
-#echo "YubiKey Token:          $YUBI"
 echo '==========================================='
 echo ''
 echo '--'
@@ -51,26 +48,6 @@ fi
 adduser $USR
 usermod -aG sudo $USR
 rsync --archive --chown=$USR:$USR ~/.ssh /home/$USR
-if [ -n "$YUBI" ]
-then
-    echo ''
-    echo '--'
-    echo '----'
-    echo '--------'
-    echo 'Install & Require YubiKey Authentication'
-    echo '========================================'
-    sudo apt-get install libpam-u2f
-    mkdir -p ~/.config/Yubico
-    pamu2fcfg > ~/.config/Yubico/u2f_keys
-#    echo "$USR:$YUBI" >> /etc/yubico
-#    sed -i 's/@include common-auth/auth required pam_yubico.so id=16 debug authfile=\/etc\/yubico/g' /etc/pam.d/sshd
-#    sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
-#    sed -i 's/# Authentication:/AuthenticationMethods publickey,keyboard-interactive/g' /etc/ssh/sshd_config
-#    sed -i 's/UsePAM no/UsePAM yes/g' /etc/ssh/sshd_config
-else
-#    sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
-fi
-#systemctl restart sshd
 echo ''
 echo '--'
 echo '----'
