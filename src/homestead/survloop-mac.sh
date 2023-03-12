@@ -82,8 +82,7 @@ if [ "$NOPCKG" == "n" ]; then
 fi
 echo 'Laravel environment file updated.'
 cd $dir
-php artisan key:generate
-COMPOSER_MEMORY_LIMIT=-1 composer require mpdf/mpdf
+COMPOSER_MEMORY_LIMIT=-1 composer -w require mpdf/mpdf
 composer require rockhopsoft/survloop "0.3.*"
 echo ''
 echo '--'
