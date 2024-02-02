@@ -112,18 +112,27 @@ echo '========================='
 if [ -d "/var/www/$DIR" ]; then
     rm -R /var/www/$DIR
 fi
-composer create-project laravel/laravel /var/www/$DIR 9.* --no-dev
-chown -R $SUPUSER:$SUPUSER /var/www/$DIR
+echo "yes" | composer create-project laravel/laravel /var/www/$DIR 10.* --no-dev
 cd /var/www/$DIR
-mkdir public/css
-mkdir public/fonts
-mkdir public/js
-mkdir public/pdf
-chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
+chown -R $SUPUSER:$SUPUSER ./
 php artisan cache:clear
 echo "yes" | composer require laravel/fortify
 php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
-systemctl reload nginx
+echo "yes" | composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php
+echo "yes" | composer update
+
+mkdir packages && mkdir packages/rockhopsoft && mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src && mkdir packages/rockhopsoft/surv-data && mkdir packages/rockhopsoft/surv-data/src
+mkdir packages/rockhopsoft/survloop-images && mkdir packages/rockhopsoft/survloop-images/src && mkdir packages/rockhopsoft/survloop-libraries && mkdir packages/rockhopsoft/survloop-libraries/src
+mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf
+mkdir storage/app/cache && mkdir storage/app/cache/css && mkdir storage/app/cache/js && mkdir storage/app/cache/html && mkdir storage/app/cache/php
+chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
+sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
+
+echo "yes" | composer dump-autoload
+echo "0" | php artisan vendor:publish --force
+php artisan config:clear
+
+
 ufw status verbose
 if [ "$INSTREDIS" == "y" ]; then
     echo ''

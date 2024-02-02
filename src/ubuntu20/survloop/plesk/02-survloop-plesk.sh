@@ -77,9 +77,7 @@ curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 
 LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
 echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath
-echo "Y" | apt install php8.0-zip php8.0-gd ghostscript php8.0-cli php8.0-bcmath
-echo "Y" | apt install php8.0-common php8.0-dev php8.0-fpm php8.0-mbstring
-echo "Y" | apt install php8.0-mysql php8.0-opcache php8.0-readline php8.0-xml php8.0-zip php-redis
+echo "Y" | apt install php8.1-zip php8.1-gd ghostscript php8.1-cli php8.1-bcmath php8.1-common php8.1-dev php8.1-fpm php8.1-mbstring php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-zip php-redis
 pecl install redis
 #echo "\n extension = redis.io" >> /etc/php/8.0/fpm/php.ini
 
@@ -91,18 +89,18 @@ echo "Y" | apt-get install curl
 
 cd $FULLDIR/httpdocs
 rm -R laravel
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar create-project laravel/laravel laravel 9.* --no-dev
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar create-project laravel/laravel laravel 10.* --no-dev
 cd laravel
-php artisan key:generate
-php artisan cache:clear
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require laravel/fortify
-php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
+/opt/plesk/php/8.2/bin/php artisan cache:clear
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar require laravel/fortify
+/opt/plesk/php/8.2/bin/php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 #COMPOSER_MEMORY_LIMIT=-1 composer require rockhopsoft/survloop
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap mews/captcha
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php
+# mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar update
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar update
 
 cd $FULLDIR/laravel
 mkdir packages && mkdir packages/rockhopsoft && mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src && mkdir packages/rockhopsoft/surv-data && mkdir packages/rockhopsoft/surv-data/src
@@ -110,21 +108,18 @@ mkdir packages/rockhopsoft/survloop-images && mkdir packages/rockhopsoft/survloo
 mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf
 mkdir storage/app/cache && mkdir storage/app/cache/css && mkdir storage/app/cache/js && mkdir storage/app/cache/html && mkdir storage/app/cache/php
 
+#chown -R resourceinnovation.org:psacln ./
+sudo find ./ -type f -exec chmod 644 {} \;
+sudo find ./ -type d -exec chmod 755 {} \;
 sudo chgrp -R psacln storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
 sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
 
-
-
-
-
-
-cp -f /var/www/$DIR/vendor/rockhopsoft/survloop/src/Overrides/database.php /var/www/$DIR/config/database.php
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar dump-autoload
-echo "0" | /opt/plesk/php/8.0/bin/php artisan vendor:publish --force
-/opt/plesk/php/8.0/bin/php artisan config:clear
-/opt/plesk/php/8.0/bin/php artisan route:clear
-/opt/plesk/php/8.0/bin/php artisan view:clear
-/opt/plesk/php/8.0/bin/php /usr/lib/plesk-9.0/composer.phar dump-autoload
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar dump-autoload
+/opt/plesk/php/8.2/bin/php artisan vendor:publish --force
+/opt/plesk/php/8.2/bin/php artisan config:clear
+/opt/plesk/php/8.2/bin/php artisan route:clear
+/opt/plesk/php/8.2/bin/php artisan view:clear
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar dump-autoload
 echo ''
 echo '--'
 echo '----'

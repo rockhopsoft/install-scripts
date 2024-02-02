@@ -21,11 +21,11 @@ echo ''
 read -p $'Instead of root, what super user name will manage this server?\n(e.g. survuser)\n' USR
 echo ''
 YUBI=""
-if [ "$WANTYUBI" = "y" ]
-then
-    read -p $'Please press the button on your YubiKey device:\n' YUBI
-    YUBI=${YUBI:0:12}
-fi
+#if [ "$WANTYUBI" = "y" ]
+#then
+#    read -p $'Please press the button on your YubiKey device:\n' YUBI
+#    YUBI=${YUBI:0:12}
+#fi
 echo ''
 echo 'Ubuntu 22.04 Super User Initiation Settings'
 echo '-------------------------------------------'
