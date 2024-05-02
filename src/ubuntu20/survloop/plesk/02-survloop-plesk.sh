@@ -70,14 +70,14 @@ echo '--------'
 echo 'Install Pear, CURL, & Composer'
 echo '=============================='
 
-echo "Y" | apt-get install php-pear pkg-config php-xml php-cli php-dev
+echo "Y" | apt-get install php-pear pkg-config php-xml php-cli php-dev php-sqlite3
 wget http://pear.php.net/go-pear.phar
 echo "Y" | apt-get install curl
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
 echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath
-echo "Y" | apt install php8.1-zip php8.1-gd ghostscript php8.1-cli php8.1-bcmath php8.1-common php8.1-dev php8.1-fpm php8.1-mbstring php8.1-mysql php8.1-opcache php8.1-readline php8.1-xml php8.1-zip php-redis
+echo "Y" | apt install php8.2-zip php8.2-gd ghostscript php8.2-cli php8.2-bcmath php8.2-common php8.2-dev php8.2-fpm php8.2-mbstring php8.2-mysql php8.2-opcache php8.2-readline php8.2-xml php8.2-zip php-redis
 pecl install redis
 #echo "\n extension = redis.io" >> /etc/php/8.0/fpm/php.ini
 
@@ -89,20 +89,19 @@ echo "Y" | apt-get install curl
 
 cd $FULLDIR/httpdocs
 rm -R laravel
-/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar create-project laravel/laravel laravel 10.* --no-dev
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar create-project laravel/laravel laravel 11.* --no-dev
 cd laravel
 /opt/plesk/php/8.2/bin/php artisan cache:clear
 /opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar require laravel/fortify
 /opt/plesk/php/8.2/bin/php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 #COMPOSER_MEMORY_LIMIT=-1 composer require rockhopsoft/survloop
-/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php
+/opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp
 # mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
 /opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar update
 
-cd $FULLDIR/laravel
 mkdir packages && mkdir packages/rockhopsoft && mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src && mkdir packages/rockhopsoft/surv-data && mkdir packages/rockhopsoft/surv-data/src
 mkdir packages/rockhopsoft/survloop-images && mkdir packages/rockhopsoft/survloop-images/src && mkdir packages/rockhopsoft/survloop-libraries && mkdir packages/rockhopsoft/survloop-libraries/src
 mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf
@@ -115,7 +114,7 @@ sudo chgrp -R psacln storage bootstrap/cache resources/views database app/Models
 sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
 
 /opt/plesk/php/8.2/bin/php /usr/lib/plesk-9.0/composer.phar dump-autoload
-/opt/plesk/php/8.2/bin/php artisan vendor:publish --force
+/opt/plesk/php/8.2/bin/php artisan vendor:publish --all --force
 /opt/plesk/php/8.2/bin/php artisan config:clear
 /opt/plesk/php/8.2/bin/php artisan route:clear
 /opt/plesk/php/8.2/bin/php artisan view:clear

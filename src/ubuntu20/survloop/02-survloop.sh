@@ -90,7 +90,7 @@ echo '=============================='
 /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
 /sbin/mkswap /var/swap.1
 /sbin/swapon /var/swap.1
-echo "Y" | apt-get install php-pear pkg-config php-xml php-cli php-dev
+echo "Y" | apt-get install php-pear pkg-config php-xml php-cli php-dev php-sqlite3
 wget http://pear.php.net/go-pear.phar
 echo ''
 echo '--- For Survloop Installations, ---'
@@ -112,13 +112,13 @@ echo '========================='
 if [ -d "/var/www/$DIR" ]; then
     rm -R /var/www/$DIR
 fi
-echo "yes" | composer create-project laravel/laravel /var/www/$DIR 10.* --no-dev
+echo "yes" | composer create-project laravel/laravel /var/www/$DIR 11.* --no-dev
 cd /var/www/$DIR
 chown -R $SUPUSER:$SUPUSER ./
 php artisan cache:clear
 echo "yes" | composer require laravel/fortify
 php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
-echo "yes" | composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php
+echo "yes" | composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp
 echo "yes" | composer update
 
 mkdir packages && mkdir packages/rockhopsoft && mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src && mkdir packages/rockhopsoft/surv-data && mkdir packages/rockhopsoft/surv-data/src
@@ -129,7 +129,7 @@ chown -R www-data:www-data storage bootstrap/cache resources/views database app/
 sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
 
 echo "yes" | composer dump-autoload
-echo "0" | php artisan vendor:publish --force
+php artisan vendor:publish --all --force
 php artisan config:clear
 
 
