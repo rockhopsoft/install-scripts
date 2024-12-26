@@ -58,15 +58,17 @@ echo "yes" | php8.2 /usr/local/bin/composer require laravel/fortify
 php8.2 artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 #COMPOSER_MEMORY_LIMIT=-1 composer require rockhopsoft/survloop
-echo "yes" | php8.2 /usr/local/bin/composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp
+echo "yes" | php8.2 /usr/local/bin/composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp symfony/mailgun-mailer symfony/http-client mailgun/mailgun-php php-http/guzzle7-adapter php-http/message
 # php8.2 /usr/local/bin/composer require -W mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
 echo "yes" | php8.2 /usr/local/bin/composer update
 
 mkdir packages && mkdir packages/rockhopsoft && mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src && mkdir packages/rockhopsoft/surv-data && mkdir packages/rockhopsoft/surv-data/src && mkdir packages/rockhopsoft/survloop-images && mkdir packages/rockhopsoft/survloop-images/src && mkdir packages/rockhopsoft/survloop-libraries && mkdir packages/rockhopsoft/survloop-libraries/src && mkdir packages/rockhopsoft/api-connect && mkdir packages/rockhopsoft/api-connect/src
-mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf && mkdir storage/app/cache && mkdir storage/app/cache/css && mkdir storage/app/cache/js && mkdir storage/app/cache/html && mkdir storage/app/cache/php
+mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf && mkdir storage/app/cache && mkdir storage/app/cache/css && mkdir storage/app/cache/js && mkdir storage/app/cache/html && mkdir storage/app/cache/php && mkdir storage/app/cache/pdf
 sudo chown -R survloop:survloop ./
+sudo find ./ -type d -exec chmod 755 {} \;
+sudo find ./ -type f -exec chmod 644 {} \;
 sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
 
 

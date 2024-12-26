@@ -52,11 +52,12 @@ echo ''
 echo '--'
 echo '----'
 echo '--------'
-echo 'Disable Root Login'
+echo 'Disabling Root Login'
 echo '====================================================='
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/#LogLevel INFO/LogLevel VERBOSE/g' /etc/ssh/sshd_config
-systemctl restart sshd
+systemctl restart ssh
+#systemctl restart sshd
 #echo ''
 #echo '--'
 #echo '----'
