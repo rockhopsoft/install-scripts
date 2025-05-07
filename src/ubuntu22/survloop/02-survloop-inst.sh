@@ -50,17 +50,17 @@ echo '========================='
 
 cd /var/www
 rm -R $FULLDIR
-php /usr/local/bin/composer create-project laravel/laravel $FULLDIR 11.* --no-dev
+composer create-project laravel/laravel $FULLDIR 11.* --no-dev
 cd $FULLDIR
 php artisan cache:clear
 php /usr/local/bin/composer require laravel/fortify
 php artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
-php /usr/local/bin/composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp symfony/mailgun-mailer symfony/http-client mailgun/mailgun-php php-http/guzzle7-adapter php-http/message
-# php /usr/local/bin/composer require -W mews/captcha
+composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp symfony/mailgun-mailer symfony/http-client mailgun/mailgun-php php-http/guzzle7-adapter php-http/message
+# composer require -W mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
-php /usr/local/bin/composer update
+composer update
 
 # For SSO with OpenID:
 # php artisan install:api --passport
@@ -76,10 +76,10 @@ sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models p
 
 # import Survloop packages
 
-php8.2 /usr/local/bin/composer dump-autoload
-php8.2 artisan vendor:publish --all --force
-php8.2 artisan config:clear && php8.2 artisan route:clear && php8.2 artisan view:clear
-php8.2 /usr/local/bin/composer dump-autoload
+composer dump-autoload
+php artisan vendor:publish --all --force
+php artisan config:clear && php artisan route:clear && php artisan view:clear
+composer dump-autoload
 
 if [ "$INSTALLDB" == "y" ]; then
     echo ''
@@ -108,9 +108,7 @@ if [ "$INSTALLDB" == "y" ]; then
 fi
 
 chown -R www-data:www-data storage bootstrap/cache resources/views database app/Models public/css public/fonts public/js public/pdf
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+php artisan config:clear && php artisan route:clear && php artisan view:clear
 composer dump-autoload --optimize
 curl https://$DIR/css-reload
 

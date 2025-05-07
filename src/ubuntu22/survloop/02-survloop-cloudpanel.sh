@@ -58,7 +58,7 @@ echo "yes" | php8.2 /usr/local/bin/composer require laravel/fortify
 php8.2 artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 #COMPOSER_MEMORY_LIMIT=-1 composer require rockhopsoft/survloop
-echo "yes" | php8.2 /usr/local/bin/composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp symfony/mailgun-mailer symfony/http-client mailgun/mailgun-php php-http/guzzle7-adapter php-http/message
+echo "yes" | php8.2 /usr/local/bin/composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp symfony/http-client symfony/mailgun-mailer mailgun/mailgun-php php-http/guzzle7-adapter php-http/message
 # php8.2 /usr/local/bin/composer require -W mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
