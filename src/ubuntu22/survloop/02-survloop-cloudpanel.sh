@@ -51,21 +51,21 @@ echo '========================='
 
 cd $FULLDIR/httpdocs
 rm -R laravel
-echo "yes" | php8.2 /usr/local/bin/composer create-project laravel/laravel laravel 11.* --no-dev
+echo "yes" | php8.3 /usr/local/bin/composer create-project laravel/laravel laravel 11.* --no-dev
 cd laravel
 php artisan cache:clear
-echo "yes" | php8.2 /usr/local/bin/composer require laravel/fortify
-php8.2 artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
+echo "yes" | php8.3 /usr/local/bin/composer require laravel/fortify
+php8.3 artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
 
 #COMPOSER_MEMORY_LIMIT=-1 composer require rockhopsoft/survloop
-echo "yes" | php8.2 /usr/local/bin/composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp symfony/http-client symfony/mailgun-mailer mailgun/mailgun-php php-http/guzzle7-adapter php-http/message
-# php8.2 /usr/local/bin/composer require -W mews/captcha
+echo "yes" | php8.3 /usr/local/bin/composer require -W components/jquery components/jqueryui doctrine/dbal fortawesome/font-awesome guzzlehttp/guzzle intervention/image laravel/fortify laravel/helpers laravel/sanctum matthiasmullie/minify maatwebsite/excel mpdf/mpdf nnnick/chartjs paragonie/random_compat plotly/plotly.js predis/predis summernote/summernote twbs/bootstrap chargebee/chargebee-php spatie/laravel-csp symfony/http-client symfony/mailgun-mailer mailgun/mailgun-php php-http/guzzle7-adapter php-http/message
+# php8.3 /usr/local/bin/composer require -W mews/captcha
 # genealabs/laravel-model-caching
 # no longer needed: fideloper/proxy
-echo "yes" | php8.2 /usr/local/bin/composer update
+echo "yes" | php8.3 /usr/local/bin/composer update
 
 mkdir packages && mkdir packages/rockhopsoft && mkdir packages/rockhopsoft/survloop && mkdir packages/rockhopsoft/survloop/src && mkdir packages/rockhopsoft/surv-data && mkdir packages/rockhopsoft/surv-data/src && mkdir packages/rockhopsoft/survloop-images && mkdir packages/rockhopsoft/survloop-images/src && mkdir packages/rockhopsoft/survloop-libraries && mkdir packages/rockhopsoft/survloop-libraries/src && mkdir packages/rockhopsoft/api-connect && mkdir packages/rockhopsoft/api-connect/src
-mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf && mkdir storage/app/cache && mkdir storage/app/cache/css && mkdir storage/app/cache/js && mkdir storage/app/cache/html && mkdir storage/app/cache/php && mkdir storage/app/cache/pdf
+mkdir public/css && mkdir public/fonts && mkdir public/js && mkdir public/pdf && mkdir storage/app/cache && mkdir storage/app/cache/css && mkdir storage/app/cache/js && mkdir storage/app/cache/html && mkdir storage/app/cache/php && mkdir storage/app/cache/pdf && mkdir storage/app/api && mkdir storage/app/api/csv && mkdir storage/app/api/json && mkdir storage/app/api/pdf
 sudo chown -R survloop:survloop ./
 sudo find ./ -type d -exec chmod 755 {} \;
 sudo find ./ -type f -exec chmod 644 {} \;
@@ -77,10 +77,10 @@ sudo chmod -R 0775 storage bootstrap/cache resources/views database app/Models p
 
 
 
-php8.2 /usr/local/bin/composer dump-autoload
-php8.2 artisan vendor:publish --all --force
-php8.2 artisan config:clear && php8.2 artisan route:clear && php8.2 artisan view:clear
-php8.2 /usr/local/bin/composer dump-autoload
+php8.3 /usr/local/bin/composer dump-autoload
+php8.3 artisan vendor:publish --all --force
+php8.3 artisan config:clear && php8.3 artisan route:clear && php8.3 artisan view:clear
+php8.3 /usr/local/bin/composer dump-autoload
 echo ''
 echo '--'
 echo '----'
@@ -120,20 +120,20 @@ if [ "$INSTALLDB" == "y" ]; then
     echo '======================================'
     DBKEY='\\Illuminate\\Support\\Facades\\DB'
     sed -i "s/Schema::create/$DBKEY::statement('SET SESSION sql_require_primary_key=0'); Schema::create/g" /var/www/$DIR/database/migrations/*.php
-    echo "yes" | php8.2 artisan migrate --force
+    echo "yes" | php8.3 artisan migrate --force
     echo ''
     echo '--'
     echo '----'
     echo '--------'
     echo 'Fill Database with Laravel Seeders'
     echo '=================================='
-    echo "yes" | php8.2 artisan db:seed --force --class=SurvloopSeeder
-    echo "yes" | php8.2 artisan db:seed --force --class=ZipCodeSeeder
-    echo "yes" | php8.2 artisan db:seed --force --class=ZipCodeSeeder2
-    echo "yes" | php8.2 artisan db:seed --force --class=ZipCodeSeeder3
-    echo "yes" | php8.2 artisan db:seed --force --class=ZipCodeSeeder4
+    echo "yes" | php8.3 artisan db:seed --force --class=SurvloopSeeder
+    echo "yes" | php8.3 artisan db:seed --force --class=ZipCodeSeeder
+    echo "yes" | php8.3 artisan db:seed --force --class=ZipCodeSeeder2
+    echo "yes" | php8.3 artisan db:seed --force --class=ZipCodeSeeder3
+    echo "yes" | php8.3 artisan db:seed --force --class=ZipCodeSeeder4
     if [ "$NOPCKG" == "n" ]; then
-        echo "yes" | php8.2 artisan db:seed --force --class=$PCKGCLASS
+        echo "yes" | php8.3 artisan db:seed --force --class=$PCKGCLASS
     fi
 fi
 

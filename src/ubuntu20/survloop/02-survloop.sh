@@ -70,8 +70,8 @@ ufw allow 'Nginx HTTPS'
 echo "y" | ufw enable
 #echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php7.4-zip php7.4-gd ghostscript
 LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
-echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php8.0-zip php8.0-gd ghostscript
-echo "Y" | apt install php8.0-cli php8.0-bcmath php8.0-cli php8.0-common php8.0-dev php8.0-fpm php8.0-gd php8.0-mbstring php8.0-mysql php8.0-opcache php8.0-readline php8.0-xml php8.0-zip
+echo "Y" | apt install zip unzip php-fpm php-mysql php-mbstring php-xml php-bcmath php8.3-zip php8.3-gd ghostscript
+echo "Y" | apt install php8.3-cli php8.3-bcmath php8.3-cli php8.3-common php8.3-dev php8.3-fpm php8.3-gd php8.3-mbstring php8.3-mysql php8.3-opcache php8.3-readline php8.3-xml php8.3-zip
 systemctl reload nginx
 cp /root/install-scripts/src/ubuntu20/survloop/samples/nginx-example.com /etc/nginx/sites-available/$DIR
 sed -i "s/example.com/$DIR/g" /etc/nginx/sites-available/$DIR
@@ -102,7 +102,7 @@ echo "Y" | apt-get install curl
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 echo "Y" | apt-get install php-redis
 pecl install redis
-echo "\n extension = redis.io" >> /etc/php/8.0/fpm/php.ini
+echo "\n extension = redis.io" >> /etc/php/8.3/fpm/php.ini
 echo ''
 echo '--'
 echo '----'
